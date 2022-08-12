@@ -1,4 +1,4 @@
-"""Project Euler Problem 1"""
+"""Project Euler Problem 1 - Multiples of 3 or 5"""
 
 
 def three_or_five(number):

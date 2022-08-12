@@ -1,8 +1,8 @@
-"""Project Euler Problem 2"""
+"""Project Euler Problem 2 - Even Fibonacci numbers"""
 
 
 def fibonacci(bound):
-	""" generates the fibonacci sequence and creates a summation of even terms under the upper bound
+	"""generates the fibonacci sequence and creates a summation of even terms under the upper bound
 
 	:param bound: Int - Our sequence upper bound
 	:return: Int - our summation
