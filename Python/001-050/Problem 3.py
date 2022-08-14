@@ -14,7 +14,7 @@ def factors(value):
 		# for loop until you hit the first possible divisor, guaranteed to be prime
 		# starts at 2 because 1 is not prime
 		# ends at value (if largest factor is itself), +1 because range() end exclusive bound
-		for number in range(2, value + 1):
+		for number in range(3, value + 1, 2):
 			# if number divides evenly
 			if value % number == 0:
 				# use floored division to prevent expanding int to float
