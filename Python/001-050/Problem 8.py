@@ -26,16 +26,27 @@ series = np.array(list(map(int, input_string)))
 
 
 def largest_window_product(size, main_array):
+    """ Finds the largest product in a sliding window of a large string of numbers, and its window
+
+    :param size: Int - How large we want our sliding window to be
+    :param main_array: np.array - a list of our integers to slide our window across
+    :return: -
+    """
     inputs_array = []
     outputs_array = []
     start = 0
     end = size
     while end <= main_array.size:
-        print(main_array[start:end])
+        inputs_array.append(main_array[start:end])
+        outputs_array.append(np.prod(main_array[start:end]))
         start += 1
         end += 1
-    return
+        print(main_array[start:end])
+        print(np.prod(main_array[start:end]))
+    x = outputs_array.index(max(outputs_array))
+    print(len(outputs_array))
+    return inputs_array[x], outputs_array[x]
 
 
 if __name__ == "__main__":
-    largest_window_product(4, series)
+    print(largest_window_product(13, series))
