@@ -30,23 +30,24 @@ def largest_window_product(size, main_array):
 
     :param size: Int - How large we want our sliding window to be
     :param main_array: np.array - a list of our integers to slide our window across
-    :return: -
+    :return: np array, int - the 13 adjacent digits and their product
     """
     inputs_array = []
     outputs_array = []
     start = 0
     end = size
     while end <= main_array.size:
+        # save the processed array for indexing purposes and curiosity
         inputs_array.append(main_array[start:end])
-        outputs_array.append(np.prod(main_array[start:end]))
+        # if you don't specify the data type, numpy defaults to 32bit int which makes our program fail
+        outputs_array.append(np.prod(main_array[start:end], dtype=np.int64))
         start += 1
         end += 1
-        print(main_array[start:end])
-        print(np.prod(main_array[start:end]))
-    x = outputs_array.index(max(outputs_array))
-    print(len(outputs_array))
-    return inputs_array[x], outputs_array[x]
+    # get the index of the maximum product so we can also know where the corresponding array input is
+    i = outputs_array.index(max(outputs_array))
+    return inputs_array[i], outputs_array[i]
 
 
 if __name__ == "__main__":
-    print(largest_window_product(13, series))
+    # output the array itself for curiosity's sake
+    print("The largest product of 13 adjacent digits is: ", largest_window_product(13, series))
