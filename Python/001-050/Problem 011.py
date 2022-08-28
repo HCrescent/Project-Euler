@@ -1,5 +1,5 @@
 """Project Euler Problem 11 - Largest product in a grid"""
-with open("text inputs/Problem 11.txt", 'r') as infile:
+with open("text inputs/Problem 011.txt", 'r') as infile:
 	# one liner formatting: for each line in the infile, map the integer function on to each string split by a space
 	matrix_map = [list(map(int, line.split(' '))) for line in infile]
 

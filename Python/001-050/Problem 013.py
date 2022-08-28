@@ -4,7 +4,7 @@
 # and then from right to left sum all the single digits in that power of 10
 # and append carry's to the proper digits and then at the end concatenate the resulting list
 # for the first ten digits
-with open("text inputs/Problem 13.txt", 'r') as infile:
+with open("text inputs/Problem 013.txt", 'r') as infile:
 	data = [int(line.rstrip()) for line in infile]
 
 
