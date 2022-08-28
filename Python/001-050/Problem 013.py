@@ -1,4 +1,4 @@
-"""Project Euler Problem 12 - Large sum"""
+"""Project Euler Problem 13 - Large sum"""
 # this problem is trivial in python but if I had to do it with restricted integer sizes
 # i would split each large integer into an array of single digit integers
 # and then from right to left sum all the single digits in that power of 10
