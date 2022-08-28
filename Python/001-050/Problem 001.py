@@ -1,19 +1,21 @@
 """Project Euler Problem 1 - Multiples of 3 or 5"""
 
 
-def three_or_five(number):
+def sumDivisibleBy(number, bound=1000):
 	"""Takes an integer and creates a summation of all natural numbers below given, that are multiples of 3 or 5
+	the summation of integers from 1 to bound = .5*n*(n+1)
+	instead we are making a summation of multiples of number from number to bound, then we can pull number out
+	of that series resulting in a formula of number*.5*n*(n+1) for an updated bound of bound//number
 
-	:param number: Int - a natural upper bound (exclusive)
+	:param number: Int - what numbers divisors are in the natural numbers below the bound
+	:param bound: Int - a natural upper bound (exclusive)
 	:return: Int - finished summation
 	"""
-
-	summation = 0
-	for i in range(number):
-		if i % 3 == 0 or i % 5 == 0:
-			summation += i
-	return summation
+	# bound - 1 because we are only counting number BELOW the bound
+	n = (bound - 1) // number
+	return number * (n * (n + 1)) // 2
 
 
 if __name__ == "__main__":
-	print("The sum of all the multiples of 3 or 5 below 1000 is", three_or_five(1000))
+	# the because multiples of both 3 and 5 are counted twice we must subtract those numbers counted twice (3*5)
+	print("The sum of multiples of 3 or 5 below 1000 is:", sumDivisibleBy(3) + sumDivisibleBy(5) - sumDivisibleBy(15))
