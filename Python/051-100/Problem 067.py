@@ -1,4 +1,4 @@
-"""Project Euler Problem 67 - Maximum path sum I"""
+"""Project Euler Problem 67 - Maximum path sum II"""
 with open("text inputs/Problem 067.txt", 'r') as infile:
 	# one liner formatting: for each line in the infile, map the integer function on to each string split by a space
 	matrix_map = [list(map(int, line.split(' '))) for line in infile]
