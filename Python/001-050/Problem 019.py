@@ -1,6 +1,5 @@
 """Project Euler Problem 19 - Counting Sundays"""
-# what do i need
-# i need to be able to tell what the day of the week it is at any given date
+
 
 standard_months = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
 leap_months = {1: 31, 2: 29, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
