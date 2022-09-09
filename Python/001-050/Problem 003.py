@@ -17,8 +17,8 @@ def primeFactorize(value):
 			number = prime_factors[-1]
 		# while loop until you hit the first possible divisor, guaranteed to be prime
 		# starts at 2 because 1 is not prime and always divisible
-		# ends at value/2 (if largest factor is itself)
-		while number <= value/2:
+		# ends at sqrt of number (if largest factor is itself)
+		while number <= value**.5:
 			# if number divides evenly
 			if value % number == 0:
 				# use floored division to prevent expanding int to float
@@ -35,12 +35,11 @@ def primeFactorize(value):
 			else:
 				number += 1
 		# since we stopped early to save checking obviously wrong factors
-		if number > value/2:
+		if number > value**.5:
 			# at this point there are no more factors than our leftover value itself
 			prime_factors.append(value)
 			# lowering value to 1 to prepare to exit function
-			value //= value
-
+			value /= value
 	return prime_factors
 
 
