@@ -60,6 +60,11 @@ def primeFactorize(value):
 
 
 def divisorsSum(value):
+	""" Sum function that uses a multiplicative formula for each prime factor of a number
+	σ(prime^power) = (prime^power+1 - 1)/(prime-1)
+	:param value: Int - Integer that we want the sum of all its divisors
+	:return: Int - the finished sum
+	"""
 	# get the list of prime factors
 	prime_factor_list = primeFactorize(value)
 	# make a condensed list of unique factors
