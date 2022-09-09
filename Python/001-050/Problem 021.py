@@ -100,7 +100,7 @@ def properDivisors(value):
 
 if __name__ == "__main__":
 	amicable_numbers = []
-	for x in range(1, 10000):
+	for x in range(10000):
 		# if true we found a potential amicable pair
 		if sum(properDivisors(sum(properDivisors(x)))) == x:
 			# make sure its pair isn't actually itself
