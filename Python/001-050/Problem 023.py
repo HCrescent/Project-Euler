@@ -1,6 +1,4 @@
 """Project Euler Problem 23 - Non-abundant sums"""
-import time
-start = time.time()
 
 
 def product(values):
@@ -102,14 +100,19 @@ def generateAbundantNumbers(upper_bound):
 
 if __name__ == "__main__":
 	bound = 28123
+	# generate a list of abundant numbers
 	temp_list = generateAbundantNumbers(bound)
-	sum_of_2_abundant_numbers = []
+	# create an empty set
+	sum_of_2_abundant_numbers = set()
 	for abundant in temp_list:
+		# skip abundant numbers greater than half our bound as they would produce integers outside our bound
+		if abundant * 2 > bound:
+			break
 		for abundant2 in temp_list:
-			if abundant + abundant2 <= bound:
-				sum_of_2_abundant_numbers.append(abundant + abundant2)
-	answer_set = set(range(1, bound+1))
-	print(sum(answer_set - set(sum_of_2_abundant_numbers)))
-	end = time.time()
-	total_time = end - start
-	print("\n" + str(total_time))
+			# generate a set of each integer that can be the sum of two abundant numbers (up to the bound)
+			sum_of_2_abundant_numbers.add(abundant + abundant2)
+	# generate a set of all positive integers up to the bound
+	answer_set = set(range(1, bound + 1))
+	# use set subtraction to get all the numbers that CAN NOT be the sum of two abundant numbers
+	answer_set = answer_set - sum_of_2_abundant_numbers
+	print("The Σ of all positive integers that can't be written as the sum of two abundant numbers is", sum(answer_set))
