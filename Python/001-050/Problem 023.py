@@ -1,4 +1,6 @@
 """Project Euler Problem 23 - Non-abundant sums"""
+import time
+start = time.time()
 
 
 def product(values):
@@ -85,13 +87,29 @@ def aliquotSum(value):
 	return divisorsSum(value) - value
 
 
-def generateDeficientNumbers(upper_bound):
-	deficients = []
+def generateAbundantNumbers(upper_bound):
+	""" Generates a list of abundant numbers (such that the aliquot sum of a number N is greater than N
+
+	:param upper_bound: Int - the upper limit for the generator
+	:return: List - all abundant numbers requested
+	"""
+	abundant_numbers = []
 	for each in range(1, upper_bound+1):
 		if each < aliquotSum(each):
-			deficients.append(each)
-	return deficients
+			abundant_numbers.append(each)
+	return abundant_numbers
 
 
 if __name__ == "__main__":
-	print(generateDeficientNumbers(28123))
+	bound = 28123
+	temp_list = generateAbundantNumbers(bound)
+	sum_of_2_abundant_numbers = []
+	for abundant in temp_list:
+		for abundant2 in temp_list:
+			if abundant + abundant2 <= bound:
+				sum_of_2_abundant_numbers.append(abundant + abundant2)
+	answer_set = set(range(1, bound+1))
+	print(sum(answer_set - set(sum_of_2_abundant_numbers)))
+	end = time.time()
+	total_time = end - start
+	print("\n" + str(total_time))
