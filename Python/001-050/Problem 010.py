@@ -8,6 +8,11 @@ def isPrime(value):
 	:param value: Int - Number to check if prime
 	:return: Bool - Our truthiness value of prime status
 	"""
+	# catch even values if driving code doesnt skip 1 or even numbers
+	if value % 2 == 0 or value == 1:
+		if value == 2:
+			return True
+		return False
 	# our upper range bound is the square root rounded plus 1 to offset the exclusive end of range function
 	# the reason for the square root is a shortcut, a whole number factor will never be more than the square root.
 	# then for extra efficiency we increment by two to avoid checking even value which will never be a factor of odd#
