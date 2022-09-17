@@ -1,4 +1,5 @@
 """Project Euler Problem 26 - Reciprocal cycles"""
+# solution based on Glaisher 1878, Lehmer 1941 Multiplicative Order and decimal period
 
 
 def product(values):
@@ -55,26 +56,28 @@ def primeFactorize(value):
 	return prime_factors
 
 
-def reciprocal_repeating(value):
-	""" evaluates if a value has a repeating decimal in its reciprocal (1/value)
+def decimal_period(value):
+	"""Calculates the period of repeating digits in the reciprocal (ex. 1/value) of the given value
 
-	:param value: the denominator in the reciprocal
-	:return: bool - True if the decimal
+	:param value: int - positive number, the denominator in our reciprocal
+	:return: int - the period of trailing repeating digits, 0 if decimal terminates
 	"""
 	factors = primeFactorize(value)
-	# if the factors are all 2's and/or 5's return false
-	return factors.count(2) + factors.count(5) != len(factors)
-
-
-def decimal_period(value):
-	if not reciprocal_repeating(value):
-		return 0
-	factors = primeFactorize(value)
+	# our normal theorem is that for any value co-prime to 10 can be used to calculate the repeating period
+	# by finding the multiplicative order of 10 % value ( 10**k % value == 1, k is our multiplicative order)
+	# remove factors of 2 and 5 to be left with only the factors that can be used to find the decimal period
 	factors = [i for i in factors if i != 2 and i != 5]
+	# this evaluates true when the only prime factors are 2 and 5 meaning the decimal terminates
+	if len(factors) < 1:
+		return 0
+	# at this point we know that our decimal repeats and our leftover co-prime 10 number can be plugged into
+	# the theorem
 	number = product(factors)
 	exponent = 1
+	# this will always find a true evaluation eventually
 	while True:
 		if 10**exponent % number == 1:
+			# we've found our multiplicative order
 			return exponent
 		exponent += 1
 
@@ -84,4 +87,4 @@ if __name__ == "__main__":
 	for each in range(1, 1001):
 		results.append(decimal_period(each))
 	largest = results.index(max(results))+1
-	print(largest, "repeating digits:", results[largest-1])
+	print("The value of d < 1000 for which 1/d contains the longest decimal period is:", largest)
