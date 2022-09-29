@@ -1,14 +1,15 @@
 """Project Euler Problem 31 - Coin sums"""
+# poor solution, too slow for large totals, solves the requested answer but I want a universally usable version
 
 
 def unique_denomination_sums(denominations, total, current_smallest, count=0):
 	""" counts how many ways you can make change for SMALL totals of cash (given in smallest units)
 
 	:param denominations: list - coin
-	:param total:
-	:param current_smallest:
-	:param count:
-	:return:
+	:param total: int - the total of cash (in smallest units, to be divided into partitions
+	:param current_smallest: int - the smallest denomination the current recursion level should consider
+	:param count: int - total number of unique arrangements of denominations totaling
+	:return: int - total number of unique arrangements of denominations totaling
 	"""
 	# terminating section
 	# if total is less the the second smallest denomination
@@ -28,18 +29,15 @@ def unique_denomination_sums(denominations, total, current_smallest, count=0):
 			# if our current denomination isn't 1,
 			if each != 1:
 				new_total = total - each
-			# if we are on our smallest denomination
-			elif each == denominations[0] and total % each == 0:
-				new_total = 0
+			# if our denomination is unitary (1), new total is zero
 			else:
-				new_total = total
+				new_total = 0
+			# prevent returning to a larger denomination on the next recursion level deeper
 			current_smallest = each
 			count = unique_denomination_sums(denominations, new_total, current_smallest, count)
 	return count
 
 
 if __name__ == "__main__":
-	coins = [3, 7, 25, 50]
-
-	print(unique_denomination_sums(coins, 200, coins[-1]))
-
+	coins = [1, 2, 5, 10, 20, 50, 100, 200]
+	print("The number of ways can £2 be made using any number of coins:", unique_denomination_sums(coins, 200, coins[-1]))
