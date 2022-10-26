@@ -1,4 +1,6 @@
 """Project Euler Problem 35 - Circular primes"""
+import time
+start = time.time()
 
 
 def sieveEratosthenes(n):
@@ -51,11 +53,20 @@ def circularPrimes(bound):
 	:return: List - list of circular primes
 	"""
 	primes = sieveEratosthenes(bound)
-	circle_primes = []
-	new_list = [barrelRotate(each) for each in primes]
-	for each in new_list []
-	return new_list
+	# create a copy of primes
+	circle_primes = list(primes)
+	rotations_list = [barrelRotate(each) for each in primes]
+	for index, group in enumerate(rotations_list):
+		for number in group:
+			if primes.count(number) < 1:
+				circle_primes[index] = 0
+				break
+	circle_primes = [_ for _ in circle_primes if _ != 0]
+	return circle_primes
 
 
 if __name__ == "__main__":
-	print(circularPrimes(100))
+	print(len(circularPrimes(1000000)))
+	end = time.time()
+	total_time = end - start
+	print("\n" + str(total_time))
