@@ -54,9 +54,12 @@ def circularPrimes(bound):
 	circular_set = {1, 3, 7, 9}
 	# generate prime numbers
 	primes = sieveEratosthenes(bound)
+	# prime lists can get large, so for checking primality use a hashable access structure such as set
+	prime_set = set(primes)
 	# all single digit primes are circular primes
 	circular_primes = primes[:4]
 	circular_potentials = []
+	# excluding the single digit primes with list slicing
 	for each in primes[4:]:
 		temp_set = {int(_) for _ in str(each)}
 		# if a prime number contains any numbers not in our circular set, we get the empty set
@@ -64,15 +67,19 @@ def circularPrimes(bound):
 		if temp_set.difference(circular_set) == set():
 			circular_potentials.append(each)
 	# now that the search has been narrowed, we can process all rotations for primality
+	# first create all the rotations for each candidate
 	rotations_list = [barrelRotate(each) for each in circular_potentials]
 	for index, group in enumerate(rotations_list):
 		for number in group:
-			if primes.count(number) < 1:
+			# if a number is not in the set of primes, remove/replace its whole group
+			if number not in prime_set:
 				circular_potentials[index] = None
 				break  # break out of processing this group
+	# append each number left in circular potentials that is not None-type
 	[circular_primes.append(_) for _ in circular_potentials if _]
 	return circular_primes
 
 
 if __name__ == "__main__":
-	print(circularPrimes(1000000))
+	total = len(circularPrimes(1000000))
+	print("The number of circular primes below one million is:", total)
