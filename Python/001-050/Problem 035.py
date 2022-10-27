@@ -1,6 +1,4 @@
 """Project Euler Problem 35 - Circular primes"""
-import time
-start = time.time()
 
 
 def sieveEratosthenes(n):
@@ -52,21 +50,29 @@ def circularPrimes(bound):
 	:param bound: Int - inclusive upper bound
 	:return: List - list of circular primes
 	"""
+	# all circular primes more than 1 digit must contain only numbers in this set
+	circular_set = {1, 3, 7, 9}
+	# generate prime numbers
 	primes = sieveEratosthenes(bound)
-	# create a copy of primes
-	circle_primes = list(primes)
-	rotations_list = [barrelRotate(each) for each in primes]
+	# all single digit primes are circular primes
+	circular_primes = primes[:4]
+	circular_potentials = []
+	for each in primes[4:]:
+		temp_set = {int(_) for _ in str(each)}
+		# if a prime number contains any numbers not in our circular set, we get the empty set
+		# and it is a candidate for being a circular prime
+		if temp_set.difference(circular_set) == set():
+			circular_potentials.append(each)
+	# now that the search has been narrowed, we can process all rotations for primality
+	rotations_list = [barrelRotate(each) for each in circular_potentials]
 	for index, group in enumerate(rotations_list):
 		for number in group:
 			if primes.count(number) < 1:
-				circle_primes[index] = 0
-				break
-	circle_primes = [_ for _ in circle_primes if _ != 0]
-	return circle_primes
+				circular_potentials[index] = None
+				break  # break out of processing this group
+	[circular_primes.append(_) for _ in circular_potentials if _]
+	return circular_primes
 
 
 if __name__ == "__main__":
-	print(len(circularPrimes(1000000)))
-	end = time.time()
-	total_time = end - start
-	print("\n" + str(total_time))
+	print(circularPrimes(1000000))
