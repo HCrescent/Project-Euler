@@ -17,7 +17,7 @@ def create_files(number):
     try:
         urllib.request.urlopen(f"https://projecteuler.net/problem={number}").getcode() == 200
     except HTTPError:
-        print("Project Euler website did not return data at your input")
+        print("Project Euler website did not return data at your input.")
         return
     # grab page source
     lines_list = [line for line in urllib.request.urlopen(f"https://projecteuler.net/problem={number}")]
@@ -25,7 +25,7 @@ def create_files(number):
     try:
         assert len(lines_list) > 1
     except AssertionError:
-        print("got a code 200 but page source is empty")
+        print("Got a code 200 but page source is empty.")
         return
     # string formatting for header
     target_string = str(lines_list[8])
@@ -76,7 +76,7 @@ def create_files(number):
             try:
                 urllib.request.urlopen(f"https://projecteuler.net/problem={number}").getcode() == 200
             except HTTPError:
-                print("Something went wrong grabbing text file, could not get HTTP code 200")
+                print("Something went wrong grabbing text file, could not get HTTP code 200.")
                 return
             # noinspection PyUnboundLocalVariable
             input_path = path + folder + f"/text inputs/"
@@ -90,7 +90,7 @@ def create_files(number):
             if not os.path.exists(input_path):
                 with open(input_path, 'w') as new_file:
                     new_file.writelines(line.decode('utf-8') for line in urllib.request.urlopen(text_url))
-                    print(input_path, "written to drive")
+                    print(input_path, "written to drive.")
     # script file already exists
     else:
         print(f"Script {title}" + ".py already exists.")
