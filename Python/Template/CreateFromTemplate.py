@@ -2,8 +2,7 @@
 import urllib.request
 from urllib.error import HTTPError
 from os import makedirs
-import os.path
-from os.path import isdir
+import os
 
 
 def create_files(number):
@@ -16,7 +15,7 @@ def create_files(number):
             number = input("Please enter only an integer: ")
     # check for website response
     try:
-        assert urllib.request.urlopen(f"https://projecteuler.net/problem={number}").getcode() == 200
+        urllib.request.urlopen(f"https://projecteuler.net/problem={number}").getcode() == 200
     except HTTPError:
         print("Project Euler website did not return data at your input")
         return
@@ -54,7 +53,7 @@ def create_files(number):
             new_path = f"../{floor}-{ceiling}"
             print("Path folders don't yet exist.")
             makedirs(new_path)
-            print("Directories created.")
+            print(f"Directory {new_path} created.")
     # noinspection PyUnboundLocalVariable
     if not os.path.exists(script_path):
         with open(script_path, 'w') as new_file:
@@ -67,27 +66,35 @@ def create_files(number):
                            "\n"
                            "if __name__ == \"__main__\":\n"
                            "\tprint(fun())\n")
-        print(f"Script {title}" + ".py created.")
+        print(f"Script {title}" + ".py created. Good Luck!")
         # check for additional input data
         target_line = [str(line) for line in lines_list if b'project/resources/' in line]
         if len(target_line) > 0:
-            target_line = target_line[0]
-        print(target_line)
-
-
-        # noinspection PyUnboundLocalVariable
-        input_path = path + folder + f"/text inputs/{title}" + ".txt"
-        print(input_path)
-
+            print(f"Problem {number} contains additional text input.")
+            target_line = str(target_line[0]).split("</a>")[0].split("\"")[1]
+            text_url = "https://projecteuler.net/" + target_line
+            try:
+                urllib.request.urlopen(f"https://projecteuler.net/problem={number}").getcode() == 200
+            except HTTPError:
+                print("Something went wrong grabbing text file, could not get HTTP code 200")
+                return
+            # noinspection PyUnboundLocalVariable
+            input_path = path + folder + f"/text inputs/"
+            # check if text folder exists, if not make it
+            if not os.path.isdir(input_path):
+                print("Text inputs folder doesnt yet exist.")
+                makedirs(input_path)
+                print(input_path, "created")
+            # write the text file
+            input_path = input_path + f"{title}" + ".txt"
+            if not os.path.exists(input_path):
+                with open(input_path, 'w') as new_file:
+                    new_file.writelines(line.decode('utf-8') for line in urllib.request.urlopen(text_url))
+                    print(input_path, "written to drive")
+    # script file already exists
     else:
         print(f"Script {title}" + ".py already exists.")
-    #     if not os.path.exists(input_path):
-    #         with open(input_path, 'w') as new_input:
-    #             new_input.write("insert input here")
-    #         print(f"Input input{day}.txt created.")
-    #     return
-    # print("files already exist")
-    # return
+    return
 
 
 if __name__ == "__main__":
