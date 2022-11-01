@@ -31,7 +31,7 @@ def numTruncate(number, mode):
 
 	:param number: Int - Integer we want to truncate
 	:param mode: Str - Mode indicator, supports only L, R, or B
-	:return: Set - set of
+	:return: Set - set of requested truncations of given number
 	"""
 	# make sure the proper modes are called
 	try:
@@ -43,9 +43,9 @@ def numTruncate(number, mode):
 	width = len(str(number))
 	trunc_set = {number}
 	if mode in {'L', 'B'}:
-		for magnitudeL in range(width):
+		for magnitude in range(width):
 			# shave the leftmost digit off
-			trunc_set.add(number - (number // 10**(magnitudeL+1)) * 10**(magnitudeL+1))
+			trunc_set.add(number - (number // 10**(magnitude+1)) * 10**(magnitude+1))
 	if mode in {'R', 'B'}:
 		for magnitude in range(width):
 			# shave the rightmost digit off
@@ -54,14 +54,16 @@ def numTruncate(number, mode):
 
 
 if __name__ == "__main__":
-	prime_list = sieveEratosthenes(10000000)
+	prime_list = sieveEratosthenes(1000000)
 	prime_set = set(prime_list)
 	truncatable_primes = []
-	while len(truncatable_primes) < 11:
-		# The problem dictates that single digit primes are not eligible as Truncatable Primes
-		for each in prime_list[4:]:
-			if numTruncate(each, 'B') <= prime_set:
-				truncatable_primes.append(each)
+	# The problem dictates that single digit primes are not eligible as Truncatable Primes
+	for each in prime_list[4:]:
+		# set logic, if the set we get from our function is a subset of prime_set all its members are prime
+		if numTruncate(each, 'B') <= prime_set:
+			truncatable_primes.append(each)
+		# stop processing once we found all of them (according to project euler there is only 11 that exist)
+		if len(truncatable_primes) == 11:
+			break
 	total = sum(truncatable_primes)
 	print("The sum of the only eleven primes that are both truncatable from left to right and right to left:", total)
-	print(truncatable_primes)
