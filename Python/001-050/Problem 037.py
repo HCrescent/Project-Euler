@@ -35,25 +35,33 @@ def numTruncate(number, mode):
 	"""
 	# make sure the proper modes are called
 	try:
-		assert mode in ('L', 'R', 'B')
+		assert mode in {'L', 'R', 'B'}
 	except AssertionError:
 		raise AssertionError(f"An invalid mode was received: ({number}, {mode}) needs L R or B for mode")
-	from math import log10
-	width = int(log10(number))+1
+	# technically log10 would be faster but the difference is extremely negligible for our purposes
+	# and this requires no edge case for 0 so its simpler
+	width = len(str(number))
 	trunc_set = {number}
-	if mode == 'L' or mode == 'B':
+	if mode in {'L', 'B'}:
 		for magnitudeL in range(width):
+			# shave the leftmost digit off
 			trunc_set.add(number - (number // 10**(magnitudeL+1)) * 10**(magnitudeL+1))
-	if mode == 'R' or mode == 'B':
+	if mode in {'R', 'B'}:
 		for magnitude in range(width):
+			# shave the rightmost digit off
 			trunc_set.add(number // 10**magnitude)
 	return trunc_set
 
 
 if __name__ == "__main__":
-	prime_list = sieveEratosthenes(100)
+	prime_list = sieveEratosthenes(10000000)
 	prime_set = set(prime_list)
-	# for each in prime_list:
-	print('L:', numTruncate(37, 'L'))
-	print('R:', numTruncate(37, 'R'))
-	print('B:', numTruncate(37, 'B'))
+	truncatable_primes = []
+	while len(truncatable_primes) < 11:
+		# The problem dictates that single digit primes are not eligible as Truncatable Primes
+		for each in prime_list[4:]:
+			if numTruncate(each, 'B') <= prime_set:
+				truncatable_primes.append(each)
+	total = sum(truncatable_primes)
+	print("The sum of the only eleven primes that are both truncatable from left to right and right to left:", total)
+	print(truncatable_primes)
