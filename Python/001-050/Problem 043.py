@@ -1,6 +1,4 @@
 """Project Euler Problem 43 - Sub-string divisibility"""
-import time
-start = time.time()
 
 
 def factorial(number):
@@ -56,24 +54,20 @@ if __name__ == "__main__":
 	# main loop
 	# for each 0-9 pandigital
 	for pandigital_group in pandigitals[mark:]:
-		sub_nums = []  # sub numbers for current iteration
-		# build the sub_numbers
-		# we want 7 sub_strings
+		# using a Bool flag to cut down on unneeded processing to narrow our crunch time
+		flag = True
+		# for each substring
 		for i in range(1, 8):
-			# concat the sub_nums
-			sub_nums.append("".join(pandigital_group[i:i+3]))
-		# test each sub_num
-		flag = False
-		# process only exactly as much as needed before abandoning the current iteration
-		for i, sub in enumerate(sub_nums):
-			if int(sub) % prime_list[i] != 0:
-				flag = True
+			# create the substring from permutation objects
+			temp_sub = "".join(pandigital_group[i:i+3])
+			# test the current substring for divisibility by its corresponding prime
+			if int(temp_sub) % prime_list[i-1] != 0:
+				# if it had a remainder flip the flag so we can skip the rest of the substrings
+				flag = False
 				break
-		# if the flag is tripped we move on to the next pandigital group
 		if flag:
-			continue
-		sub_string_pandigitals.append(pandigital_group)
-	print(sub_string_pandigitals)
-	end = time.time()
-	total_time = end - start
-	print("\n" + str(total_time))
+			sub_string_pandigitals.append(pandigital_group)
+	# our answers are still lists of permuted characters, so we gotta convert them for summation
+	sub_string_pandigitals = [int("".join(each)) for each in sub_string_pandigitals]
+	total = sum(sub_string_pandigitals)
+	print("The sum of all 0 to 9 pandigital numbers with substring prime divisibility:", total)
