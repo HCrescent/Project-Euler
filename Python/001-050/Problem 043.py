@@ -1,4 +1,6 @@
 """Project Euler Problem 43 - Sub-string divisibility"""
+import time
+start = time.time()
 
 
 def factorial(number):
@@ -41,18 +43,6 @@ def permutation(objects, all_permutations, single_permutation):
 	return
 
 
-def concatNum(value_a, value_b):
-	""" takes two integers and concatenates them, only works for integers > 0
-
-	:param value_a: Int - left integer
-	:param value_b: Int - right integer
-	:return: Int - both integers concatenated
-	"""
-	width = len(str(value_b))
-	concat = value_a * 10**width + value_b
-	return concat
-
-
 if __name__ == "__main__":
 	prime_list = [2, 3, 5, 7, 11, 13, 17]
 	sub_string_pandigitals = []
@@ -60,7 +50,7 @@ if __name__ == "__main__":
 	# list of permutations after the first 9! entries, because our permutations are ordered
 	# these are all the leading 0 numbers
 	mark = factorial(9)
-	p_objects = [_ for _ in range(10)]
+	p_objects = [str(_) for _ in range(10)]
 	pandigitals = []
 	permutation(p_objects, pandigitals, [])
 	# main loop
@@ -70,16 +60,13 @@ if __name__ == "__main__":
 		# build the sub_numbers
 		# we want 7 sub_strings
 		for i in range(1, 8):
-			tmp = 0
 			# concat the sub_nums
-			for digit in pandigital_group[i:i+3]:
-				tmp = concatNum(tmp, digit)
-			sub_nums.append(tmp)
+			sub_nums.append("".join(pandigital_group[i:i+3]))
 		# test each sub_num
 		flag = False
 		# process only exactly as much as needed before abandoning the current iteration
 		for i, sub in enumerate(sub_nums):
-			if sub % prime_list[i] != 0:
+			if int(sub) % prime_list[i] != 0:
 				flag = True
 				break
 		# if the flag is tripped we move on to the next pandigital group
@@ -87,3 +74,6 @@ if __name__ == "__main__":
 			continue
 		sub_string_pandigitals.append(pandigital_group)
 	print(sub_string_pandigitals)
+	end = time.time()
+	total_time = end - start
+	print("\n" + str(total_time))
