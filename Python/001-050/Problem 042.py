@@ -12,7 +12,7 @@ def triangleNumber(n):
 	:param n: Int - number 'n'
 	:return: Int - triangle number
 	"""
-	return int(n*(n+1)/2)
+	return n*(n+1)//2
 
 
 def scoreWords(words_list):
