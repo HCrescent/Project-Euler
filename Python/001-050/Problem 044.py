@@ -15,11 +15,15 @@ if __name__ == "__main__":
 	pentagon_set = set(pentagon_list)
 	Pj_list = []
 	Pk_list = []
-	for Pj in pentagon_list:
-		for Pk in pentagon_list:
-			if (Pj + Pk) in pentagon_set:
+	for i, Pj in enumerate(pentagon_list):
+		# start at i to prevent duplicate checking ex. we already check 1, 5 we don't need to check 5, 1
+		# so starting from i we eliminate checking 1 against any number as it would already have been done
+		for Pk in pentagon_list[i:]:
+			if Pj + Pk in pentagon_set:
 				if abs(Pj - Pk) in pentagon_set:
 					Pj_list.append(Pj)
 					Pk_list.append(Pk)
-	print(Pj_list)
-	print(Pk_list)
+	# there ended up being only one found, but we didn't know that ahead of time so well leave the
+	# declaration at the start as lists
+	D = abs(Pj_list[0] - Pk_list[0])
+	print("For 2 pentagonal number Pj and Pk, for which sum and difference is pentagonal D = |Pj - Pk|. D:", D)
