@@ -16,9 +16,9 @@ if __name__ == "__main__":
 	Pj_list = []
 	Pk_list = []
 	for i, Pj in enumerate(pentagon_list):
-		# start at i to prevent duplicate checking ex. we already check 1, 5 we don't need to check 5, 1
-		# so starting from i we eliminate checking 1 against any number as it would already have been done
-		for Pk in pentagon_list[i:]:
+		# start at i+1 to prevent duplicate checking ex. we already check 1, 5 we don't need to check 5, 1
+		# so starting from i+1 we eliminate checking 1 against any number as it would already have been done
+		for Pk in pentagon_list[i+1:]:
 			if Pj + Pk in pentagon_set:
 				if abs(Pj - Pk) in pentagon_set:
 					Pj_list.append(Pj)
