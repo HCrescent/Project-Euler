@@ -1,6 +1,4 @@
 """Project Euler Problem 50 - Consecutive prime sum"""
-import time
-start = time.time()
 
 
 def sieveEratosthenes(n):
@@ -45,32 +43,24 @@ if __name__ == "__main__":
 				# set the flags to the most recent info found
 				highest_width = i+1
 				highest_prime = last_sum
-	# now we know that the highest prime that can be the sum of consecutive primes is at LEAST highest_prime
+	# now we know that the highest prime that can be the sum of the most consecutive primes is at LEAST highest_prime
 	# and the width of consecutive primes is at LEAST highest_width
-	print("highest_prime", highest_prime)
-	print("highest_width", highest_width)
-	index = prime_list.index(highest_prime)
-	wave_two_width = highest_width
-	wave_two_prime = highest_prime
-	wave_two_sum = highest_prime
-	master_sum = sum(prime_list[:highest_width])
-	print("master sum going into wave two", master_sum)
-	print("master sum on second iteration", sum(prime_list[:highest_width+1]))
-	print("highest width going into wave two", highest_width)
+	master_sum = highest_prime
 	# while our scope of width can be less than the largest prime
 	while master_sum < prime_list[-1]:
+		iteration_sum = master_sum
 		# create temporary wave two list
 		wave_two_list = []
 		# for the length of the prime list, slide the window sum
 		for i in range(len(prime_list)):
 			# adding the next element in prime_list then removing the first element of our window
-			wave_two_sum += prime_list[highest_width + i]
-			wave_two_sum -= prime_list[i]
+			iteration_sum += prime_list[highest_width + i]
+			iteration_sum -= prime_list[i]
 			# only slide as long as our window sum is less than the largest prime
-			if wave_two_sum < prime_list[-1]:
+			if iteration_sum < prime_list[-1]:
 				# check the sum as a key in prime set
-				if wave_two_sum in prime_set:
-					wave_two_list.append(wave_two_sum)
+				if iteration_sum in prime_set:
+					wave_two_list.append(iteration_sum)
 			# this clause will break the for loop as we don't want to process past consecutive sums
 			# that will result in a number higher than our largest prime
 			else:
@@ -78,11 +68,9 @@ if __name__ == "__main__":
 		# if we found a sum that was a prime our highest prime will be the last element in the list
 		if len(wave_two_list) > 0:
 			highest_prime = wave_two_list[-1]
-
+			# new_highest_width = highest_width  # if you want to know how many terms uncomment and print this at end
+		# add the next prime to the master sum as our indicator for the sum of our smallest window sum
 		master_sum += prime_list[highest_width]
-		wave_two_sum = master_sum
+		# increase the window width by 1
 		highest_width += 1
-	print(highest_prime)
-	end = time.time()
-	total_time = end - start
-	print("\n" + str(total_time))
+	print("Which prime, below one-million, can be written as the sum of the most consecutive primes:", highest_prime)
