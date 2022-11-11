@@ -27,43 +27,62 @@ def sieveEratosthenes(n):
 	return prime_array[2:]
 
 
-def slidingWindowSums(the_list, the_width):
-	""" Takes a list and processes the sum of a sliding window section for the given list
-	results are returned in a list format, where the index of the list matches
-	the index starting point of the sliding window
-
-	:param the_list: List - The list we want to analyze windows out of
-	:param the_width: Int - The width of our sliding window
-	:return: List - A list of corresponding window sums where the index is the starting position of the window
-	"""
-	window_sums = []
-	# adjusted range based on window width
-	for index in range(len(the_list) - (the_width - 1)):
-		accumulator = 0
-		# for each number in the window
-		for num in the_list[index:index+the_width]:
-			accumulator += num
-		window_sums.append(accumulator)
-	return window_sums
-
-
 if __name__ == "__main__":
-	prime_list = sieveEratosthenes(100_000)
+	prime_list = sieveEratosthenes(1_000_000)
 	prime_set = set(prime_list)
-	print(prime_set)
-	print(prime_list)
 	highest_width = 1
 	highest_prime = 0
-	starting_index = 0
-	for width in range(21, len(prime_list)+1):
-		sums_list = slidingWindowSums(prime_list, width)
-		for summation in sums_list:
-			if summation in prime_set:
-				highest_width = width
-				highest_prime = summation
-				break
+	last_sum = 0
+	# to narrow our scope we will start with a simple sum starting from the first prime
+	# it wont be guaranteed to be the highest prime constructable
+	# while our sum is less than the largest prime in our prime_list
+	while last_sum < prime_list[-1]:
+		for i in range(len(prime_list)):
+			# rolling sum of primes starting from position 0
+			last_sum += prime_list[i]
+			# at each step check if we hit a prime number
+			if last_sum in prime_set:
+				# set the flags to the most recent info found
+				highest_width = i+1
+				highest_prime = last_sum
+	# now we know that the highest prime that can be the sum of consecutive primes is at LEAST highest_prime
+	# and the width of consecutive primes is at LEAST highest_width
 	print("highest_prime", highest_prime)
 	print("highest_width", highest_width)
+	index = prime_list.index(highest_prime)
+	wave_two_width = highest_width
+	wave_two_prime = highest_prime
+	wave_two_sum = highest_prime
+	master_sum = sum(prime_list[:highest_width])
+	print("master sum going into wave two", master_sum)
+	print("master sum on second iteration", sum(prime_list[:highest_width+1]))
+	print("highest width going into wave two", highest_width)
+	# while our scope of width can be less than the largest prime
+	while master_sum < prime_list[-1]:
+		# create temporary wave two list
+		wave_two_list = []
+		# for the length of the prime list, slide the window sum
+		for i in range(len(prime_list)):
+			# adding the next element in prime_list then removing the first element of our window
+			wave_two_sum += prime_list[highest_width + i]
+			wave_two_sum -= prime_list[i]
+			# only slide as long as our window sum is less than the largest prime
+			if wave_two_sum < prime_list[-1]:
+				# check the sum as a key in prime set
+				if wave_two_sum in prime_set:
+					wave_two_list.append(wave_two_sum)
+			# this clause will break the for loop as we don't want to process past consecutive sums
+			# that will result in a number higher than our largest prime
+			else:
+				break
+		# if we found a sum that was a prime our highest prime will be the last element in the list
+		if len(wave_two_list) > 0:
+			highest_prime = wave_two_list[-1]
+
+		master_sum += prime_list[highest_width]
+		wave_two_sum = master_sum
+		highest_width += 1
+	print(highest_prime)
 	end = time.time()
 	total_time = end - start
 	print("\n" + str(total_time))
