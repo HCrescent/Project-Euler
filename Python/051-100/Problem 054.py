@@ -15,18 +15,88 @@ with open("text inputs/Problem 054.txt", 'r') as infile:
 	player_2 = []
 	for line in infile:
 		# nested list comprehension, for splitting the ten card of each line into two hands left and right,
-		# and then converting the string of each card value into its corresponding integer, and finally sorted
+		# and then converting the string of each card value into its corresponding [integer, suit], and finally sorted
 		player_1.append(sorted([[card_scores[card[0]], card[1]] for card in [hand for hand in line.split()[:5]]]))
 		player_2.append(sorted([[card_scores[card[0]], card[1]] for card in [hand for hand in line.split()[5:]]]))
 
 
-# def handScore(hand):
-# 	""" Takes a poker hand in the form of a list of lists and returns the sum of the card values.
-#
-# 	:param hand: List - List of cards in the form [value, suit]
-# 	:return: Int - The sum of the values of each card in the hand
-# 	"""
-# 	return sum([card[0] for card in hand])
+def winByHighCard(cards_1, cards_2):
+	""" takes 2 reverse ordered lists of values, and determines which player won by a high card tiebreaker
+
+	:param cards_1: List - player 1s cards with matching groups removed that tied the hand
+	:param cards_2: List - player 2s cards with matching groups removed that tied the hand
+	:return: Str - Result of the game
+	"""
+	for i, value in enumerate(cards_1):
+		if value == cards_2[i]:
+			continue
+		if value > cards_2[i]:
+			return "Player 1 Win"
+		else:
+			return "Player 2 Win"
+	else:
+		# the hands are exactly the same and cant be tie broken
+		return "Draw"
+
+
+def breakTies(player_1_hand, player_2_hand, hand_type):
+	""" Takes two hands of the same class and figures out which one is the winner or if there is a draw
+	# note that this is unfinished because the sample data set did not contain enough edge cases to require
+	# this for the correct answer
+	# currently only works for High Card and One Pair
+
+	:param player_1_hand: List - List of cards in the form [value, suit]
+	:param player_2_hand: List - List of cards in the form [value, suit]
+	:param hand_type: Str - Hand classification
+	:return: Str - Match result, Player 1 Win, Player 2 Win, or Draw
+	"""
+	# build our card values in reverse ordered fashion
+	player_1_values_list = [card[0] for card in player_1_hand[::-1]]
+	player_2_values_list = [card[0] for card in player_2_hand[::-1]]
+	# print(f"{player_1_values_list!s:<25}{player_2_values_list}")
+	match hand_type:
+		case "High Card":
+			return winByHighCard(player_1_values_list, player_2_values_list)
+		case "One Pair":
+			# determine the value of the pair in each hand
+			for value in player_1_values_list:
+				if player_1_values_list.count(value) == 2:
+					pair_1 = value
+					break
+			for value in player_2_values_list:
+				if player_2_values_list.count(value) == 2:
+					pair_2 = value
+					break
+			# compare pairs, then if they are the same we will next check for high card
+			# noinspection PyUnboundLocalVariable
+			if pair_1 == pair_2:
+				player_1_values_list = [_ for _ in player_1_values_list if _ != pair_1]
+				player_2_values_list = [_ for _ in player_2_values_list if _ != pair_2]
+				return winByHighCard(player_1_values_list, player_2_values_list)
+			elif pair_1 > pair_2:
+				return "Player 1 Win"
+			else:
+				return "Player 2 Win"
+		# The rest of these cases would need to be implemented in real software, but as our data does not
+		# include any matches that will trigger these cases i have left them blank
+		case "Two Pairs":
+			pass
+		case "Three of a Kind":
+			pass
+		case "Straight":
+			pass
+		case "Flush":
+			pass
+		case "Full House":
+			pass
+		case "Four of a Kind":
+			pass
+		case "Straight Flush":
+			pass
+		# there is no possible way to tie break a royal flush in default rules-set
+		case "Royal Flush":
+			return "Draw"
+	return "Draw"
 
 
 def evalHandType(hand):
@@ -94,11 +164,26 @@ def evalHandType(hand):
 
 
 if __name__ == "__main__":
+	player_1_wins = 0
+	player_2_wins = 0
+	draws = 0
+	# for each poker match
 	for i in range(len(player_1)):
-		print(f"Game {i + 1:>4}: Player 1 hand:{evalHandType(player_1[i])} {player_1[i]!s:^55} Player 2 hand:{evalHandType(player_2[i])} {player_2[i]!s:^55}")
-	print(hand_scores)
-	print(straight_list)
-	print(straight_set)
-	end = time.time()
-	total_time = end - start
-	print("\n" + str(total_time))
+		# evaluate the hand type of each player
+		hand_1, hand_2 = evalHandType(player_1[i]), evalHandType(player_2[i])
+		# if both players have the same type of hand
+		if hand_1 == hand_2:
+			# process the tiebreaker analysis
+			match breakTies(player_1[i], player_2[i], hand_1):
+				case "Draw":
+					draws += 1
+				case "Player 1 Win":
+					player_1_wins += 1
+				case "Player 2 Win":
+					player_2_wins += 1
+		# otherwise scoring is easy check if hands are different types
+		elif hand_scores[hand_1] > hand_scores[hand_2]:
+			player_1_wins += 1
+		else:
+			player_2_wins += 1
+	print(f"Out of 1000 5 card Poker hands, Player 1 wins {player_1_wins} games.")
