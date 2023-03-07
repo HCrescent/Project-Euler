@@ -48,8 +48,7 @@ def decrypt():
 		for i, char in enumerate(message):
 			message[i] = char ^ next(key_cycle)
 	read(message)
-	print(sum(message))
-	return
+	return sum(message)
 
 
 # learn yields!!!!!!!!
@@ -61,4 +60,5 @@ def generateKeys():
 
 
 if __name__ == "__main__":
-	decrypt()
+	ans = decrypt()
+	print("After decryption, the sum of the ASCII values in the original text is found to be", ans)

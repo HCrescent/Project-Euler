@@ -1,8 +1,6 @@
 """Project Euler Problem 60 - Prime pair sets"""
-from itertools import combinations
 
 
-# quick abstract, find the smallest sum of a set of 5 primes, where every permutation of 5 choose 2 results in a prime
 def sieveEratosthenes(n):
 	""" Generates a list of prime numbers up to inclusive n
 
@@ -50,31 +48,6 @@ def isPrime(value):
 	return True
 
 
-def factorial(number):
-	""" simple factorial function, can also use import math for math.factorial() for a faster built in function
-
-	:param number: Int - the number we want to calculate the factorial of
-	:return: Int - the final product
-	"""
-	prod = 1
-	for each in range(1, number+1):
-		prod *= each
-	return prod
-
-
-def combinatorics(n, k):
-	""" Simple combinatorics formula for n choose k, n! / k!(n-k)!
-
-
-	:param n: Int - Number to choose from
-	:param k: Int - total of choices
-	:return: Int - the solution to formula n! / k!(n-k)!
-	"""
-	numerator = factorial(n)
-	denominator = factorial(k) * factorial(n - k)
-	return numerator // denominator
-
-
 def concatNum(value_a, value_b):
 	""" takes two integers and concatenates them, inputs are treated as integers not strings
 	for example, (1, 0) returns 10, (0, 1) returns 1, (1, 00) returns 10 because 00 == 0
@@ -88,57 +61,60 @@ def concatNum(value_a, value_b):
 	return concat
 
 
-def createCombinations(objects, limit):
-	comb_list = []
-	for i, P1 in enumerate(objects[:limit]):
-		for P2 in objects[i+1:limit]:
-			# check width to catch concatenations larger than our prime sieve
-			# these cases will be checked without hashtable
-			frontwards = concatNum(P1, P2)
-			backwards = concatNum(P2, P1)
-			width = len(str(frontwards))
-			width_cap = len(str(prime_list[-1]))
-			if width <= width_cap:  # normal hashable case
-				if frontwards in prime_set:
-					if backwards in prime_set:
-						comb_list.append((P1, P2))
-			else:  # slow un-hashable case
-				if isPrime(frontwards):
-					if isPrime(backwards):
-						comb_list.append((P1, P2))
-	return comb_list
+def checkPair(prime_1, prime_2):
+	""" takes 2 primes and returns True if they result in a prime when concatenated forwards and backwards
+
+	:param prime_1: Int - prime number
+	:param prime_2: Int - prime number
+	:return: Bool
+	"""
+	frontwards = concatNum(prime_1, prime_2)
+	backwards = concatNum(prime_2, prime_1)
+	width = len(str(frontwards))
+	width_cap = len(str(prime_list[-1]))
+	if width <= width_cap:  # normal hashable case
+		if frontwards in prime_set:
+			if backwards in prime_set:
+				return True
+	else:  # slow un-hashable case
+		if isPrime(frontwards):
+			if isPrime(backwards):
+				return True
+	return False
 
 
-def narrowDown():
-	set_size = 5
-	pair_list = createCombinations(prime_list, 200)
-	pair_set = set(pair_list)
-	flatten = [each for coord in pair_list for each in coord]
-	candidate_set = set([each for each in flatten if flatten.count(each) > 3])
-	candidate_list = list(sorted(candidate_set))
-	print("candidates:", len(candidate_list))
-	print("total combinations:", combinatorics(len(candidate_list), set_size))
-	gen_comb = combinations(candidate_list, set_size)
-	not_found = True
-	test_count = 0
-	while not_found:
-		cur_test = next(gen_comb)
-		test_gen = combinations(cur_test, 2)
-		for coord in test_gen:
-			if coord not in pair_set:
-				break
-		else:  # reach here and you passed all tests and found the answer
-			return cur_test
-		test_count += 1
-		if test_count % 100_000_000 == 0:
-			print(test_count)
-	return
+def findSet(primes):
+	# first number
+	for P1_index, P1 in enumerate(primes):
+		# second number
+		P2_index = P1_index+1
+		for P2 in primes[P1_index+1:]:
+			if checkPair(P1, P2):
+				# third number
+				P3_index = P2_index+1
+				for P3 in primes[P2_index+1:]:
+					if checkPair(P3, P2) and checkPair(P3, P1):
+						# fourth number
+						P4_index = P3_index+1
+						for P4 in primes[P3_index+1:]:
+							if checkPair(P4, P3) and checkPair(P4, P2) and checkPair(P4, P1):
+								# fifth number
+								# print("tumbler:", P1, P2, P3, P4)
+								for P5 in primes[P4_index+1:]:
+									# print("test:", P1, P2, P3, P4, P5)
+									if checkPair(P5, P4) and checkPair(P5, P3) and checkPair(P5, P2) and checkPair(P5, P1):
+										return P1, P2, P3, P4, P5
+							P4_index += 1
+					P3_index += 1
+			P2_index += 1
 
 
 if __name__ == "__main__":
 	prime_list = sieveEratosthenes(1_000_000)
-	prime_list.pop(0)
 	prime_set = set(prime_list)
-	print("largest prime = ", prime_list[-1])
-	print("prime list length:", len(prime_list))
-	print(narrowDown())
+	prime_list = sieveEratosthenes(10_000)
+	prime_list.pop(0)  # remove 2
+	prime_list.pop(1)  # remove 5
+	prime_pairs = findSet(prime_list)
+	ans = sum(prime_pairs)
+	print("The lowest sum for a set of five primes for which any two primes concatenate to produce another prime:", ans)
