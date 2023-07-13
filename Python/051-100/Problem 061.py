@@ -1,11 +1,5 @@
 """Project Euler Problem 61 - Cyclical figurate numbers"""
-# how I will narrow the search space, do all our grouping of starting 2 digits up front to prevent duplicate checking
-# each number 100 times, this will drastically lower our computing time given the upper limit of 30 billion combinations
-# we will always start on octagonal because there is the fewest options and thus by assuming the end and
-# start of a circle will connect there we can eliminate further combinations from ever checking
-# note that we will need to check every other row of matches because we won't know the order of sets in our circle, but
-# once a candidate from that set is chosen we should lock out that set from further consideration with a lock flag/mask
-
+from copy import deepcopy
 
 def triangleNumber(n):
 	""" returns nth triangle number using formula Tn=n(n+1)/2
@@ -62,6 +56,11 @@ def octagonNumber(n):
 
 
 def generateCandidates(p):
+	""" builds a list of 4 digit figurate numbers for p type figurate
+
+	:param p: Int - number that determines which type of figurate to build
+	:return: List - all 4 digit figurate numbers of p type
+	"""
 	match p:
 		case 3:
 			sequence = triangleNumber
@@ -106,30 +105,51 @@ def legalTensor(candidates):
 					break # move on to next figurate
 				else: # else it matches and can be placed into its place in the tensor
 					tensor[target][figurate].append(candidates[figurate].pop(0))  # attempt to place into tensor
-
-	print(tensor[10]) # this should if successful show us all candidates for each figurate list starting with 10
-	print(tensor[98])
 	return tensor
 
 
 def findCycle(tensor, candidates):
-	print(tensor[10])
+	# build the flag mask for figurate availability
 	flag_mask = 0
 	for n, group in enumerate(candidates):
 		if group:
 			flag_mask ^= 1 << n
-	print(bin(flag_mask))
-	cycle = []
-	return cycle
+	# start logic here (from highest to lowest figurate type)
+	for start_f_type in range(3, len(candidates))[::-1]:
+		for each in candidates[start_f_type]:
+			cycle = [each]
+			new_flag_mask = flag_mask ^ (1 << start_f_type)  # toggle starting figurate bit to 0
+			target = int(str(each)[-2:])  # target starting digit for the next number in cycle
+			test = grabNextRecursive(target, new_flag_mask, tensor, candidates, cycle)
+			if len(test) == len(candidates)-3:
+				break
+	return test
 
+
+def grabNextRecursive(target, flag_mask, tensor, candidates, cycle):
+	# end catch
+	if len(cycle) == len(candidates) - 3:  # if our cycle is full
+		if int(str(cycle[-1])[-2:]) != int(str(cycle[0])[:2]):  # checks if our full cycle is not a true loop
+			cycle.pop()  # remove the last element to continue searching
+		return cycle  # return the cycle
+	# main logic
+	for row in range(3, len(candidates)):  # for each figurate row in the target tensor section
+		if flag_mask & (1 << row):  # if the row is legal to grab from
+			if tensor[target][row]:  # if the row isn't empty
+				for new_pick in tensor[target][row]:  # for each available pick we will pick it and recurse
+					new_target = int(str(new_pick)[-2:])  # grab target for next recurse
+					new_flag_mask = flag_mask ^ (1 << row)  # flag the row as chosen for next recurse
+					cycle.append(new_pick)
+					final_cycle = grabNextRecursive(new_target, new_flag_mask, tensor, candidates, cycle)
+					if len(final_cycle) == len(candidates)-3:  # escape clause to climb out of stack
+						return final_cycle
+	else:  # by here we tried all the numbers that can continue from our current choice so pop it for continuing
+		cycle.pop()
+		return cycle
 
 if __name__ == "__main__":
-	figurate_lists = [[], [], [], generateCandidates(3), generateCandidates(4), generateCandidates(5)]
-	#hexa_candidates = generateCandidates(6)
-	#hepta_candidates = generateCandidates(7)
-	#octa_candidates = generateCandidates(8)
-	for i, each in enumerate(figurate_lists):
-		print(i, each)
-	legalTensor(figurate_lists)
-	print(figurate_lists)
+	figurate_lists = [[], [], [], generateCandidates(3), generateCandidates(4), generateCandidates(5), generateCandidates(6), generateCandidates(7), generateCandidates(8)]
+	solution = findCycle(legalTensor(deepcopy(figurate_lists)), figurate_lists)
+	print(solution)
+	print(sum(solution))
 
