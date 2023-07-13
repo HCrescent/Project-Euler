@@ -91,18 +91,36 @@ def generateCandidates(p):
 	return valid_candidates
 
 
-def legal_tensor(candidates):
+def legalTensor(candidates):
+	""" takes a 2d array of figurate sequences, plugs them into a tensor in order to group them by both figurate and
+	the two starting digits
+
+	:param candidates: List - 2d array of figurates
+	:return: List - 3d array of the same figurates
+	"""
 	tensor = [[[] for _ in range(len(candidates))] for _ in range(100)]  # build the empty tensor
 	for target in range(10, 100): # for each leading two digits
 		for figurate in range(3, len(candidates)):  # for each row of figurate numbers
-			for index, number in enumerate(candidates[figurate]):
-				if int(str(number)[0:2]) != target:  # if the target doesn't match the first two digits move on
-					break # continue to next figurate row
-				else:
+			while candidates[figurate]:  # while the figurate row is not empty
+				if int(str(candidates[figurate][0])[0:2]) != target: # if the test doesn't match move on
+					break # move on to next figurate
+				else: # else it matches and can be placed into its place in the tensor
 					tensor[target][figurate].append(candidates[figurate].pop(0))  # attempt to place into tensor
 
 	print(tensor[10]) # this should if successful show us all candidates for each figurate list starting with 10
+	print(tensor[98])
 	return tensor
+
+
+def findCycle(tensor, candidates):
+	print(tensor[10])
+	flag_mask = 0
+	for n, group in enumerate(candidates):
+		if group:
+			flag_mask ^= 1 << n
+	print(bin(flag_mask))
+	cycle = []
+	return cycle
 
 
 if __name__ == "__main__":
@@ -112,5 +130,6 @@ if __name__ == "__main__":
 	#octa_candidates = generateCandidates(8)
 	for i, each in enumerate(figurate_lists):
 		print(i, each)
-	legal_tensor(figurate_lists)
+	legalTensor(figurate_lists)
+	print(figurate_lists)
 
