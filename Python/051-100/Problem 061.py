@@ -109,7 +109,13 @@ def legalTensor(candidates):
 
 
 def findCycle(tensor, candidates):
-	# build the flag mask for figurate availability
+	""" the main driving function for finding the correct figurate cycle
+
+	:param tensor: List - 3d array of 4 digit figurate numbers by type and leading digits
+	:param candidates: List - 2d array of 4 digit figurate numbers by type
+	:return: List - the full cycle when found
+	"""
+	# build the flag bitmask for figurate availability
 	flag_mask = 0
 	for n, group in enumerate(candidates):
 		if group:
@@ -120,13 +126,21 @@ def findCycle(tensor, candidates):
 			cycle = [each]
 			new_flag_mask = flag_mask ^ (1 << start_f_type)  # toggle starting figurate bit to 0
 			target = int(str(each)[-2:])  # target starting digit for the next number in cycle
-			test = grabNextRecursive(target, new_flag_mask, tensor, candidates, cycle)
-			if len(test) == len(candidates)-3:
-				break
-	return test
+			result = grabNextRecursive(target, new_flag_mask, tensor, candidates, cycle)
+			if len(result) == len(candidates)-3:
+				return result
 
 
 def grabNextRecursive(target, flag_mask, tensor, candidates, cycle):
+	""" Recursive function that searches for the next legal number in a potential cycle
+
+	:param target: Int - The last 2 digits of the previous member of the cycle
+	:param flag_mask: Int - bitmask for determining which figurate types can still be chosen
+	:param tensor: List - 3d list of all the candidates into groups by their leading 2 digits
+	:param candidates: List - list of all 4 digits figurates by type
+	:param cycle: List - list of members of the cycle so far
+	:return: List - list of members of the cycle after processes
+	"""
 	# end catch
 	if len(cycle) == len(candidates) - 3:  # if our cycle is full
 		if int(str(cycle[-1])[-2:]) != int(str(cycle[0])[:2]):  # checks if our full cycle is not a true loop
@@ -139,17 +153,19 @@ def grabNextRecursive(target, flag_mask, tensor, candidates, cycle):
 				for new_pick in tensor[target][row]:  # for each available pick we will pick it and recurse
 					new_target = int(str(new_pick)[-2:])  # grab target for next recurse
 					new_flag_mask = flag_mask ^ (1 << row)  # flag the row as chosen for next recurse
-					cycle.append(new_pick)
+					cycle.append(new_pick)  # append cycle for next recurse
 					final_cycle = grabNextRecursive(new_target, new_flag_mask, tensor, candidates, cycle)
 					if len(final_cycle) == len(candidates)-3:  # escape clause to climb out of stack
 						return final_cycle
-	else:  # by here we tried all the numbers that can continue from our current choice so pop it for continuing
+	else:  # no continuation was viable for current choice so pop it for replacing on the next go
 		cycle.pop()
 		return cycle
 
 if __name__ == "__main__":
-	figurate_lists = [[], [], [], generateCandidates(3), generateCandidates(4), generateCandidates(5), generateCandidates(6), generateCandidates(7), generateCandidates(8)]
+	figurate_lists = [[], [], []]
+	for P in range(3, 9):
+		figurate_lists.append(generateCandidates(P))
 	solution = findCycle(legalTensor(deepcopy(figurate_lists)), figurate_lists)
 	print(solution)
-	print(sum(solution))
-
+	print("The sum of the only ordered set of six cyclic 4-digit numbers for which each polygonal\n"
+	      "type: triangle, square, pentagonal, hexagonal, heptagonal, and octagonal, is:", sum(solution))
