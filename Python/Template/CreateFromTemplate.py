@@ -61,11 +61,11 @@ def create_files(number):
                            "\n"
                            "\n"
                            "def fun():\n"
-                           "\tpass\n"   
+                           "    pass\n"   
                            "\n"
                            "\n"
                            "if __name__ == \"__main__\":\n"
-                           "\tprint(fun())\n")
+                           "    print(fun())\n")
         print(f"Script {title}" + ".py created. Good Luck!")
         # check for additional input data
         target_line = [str(line) for line in lines_list if b'project/resources/' in line]
