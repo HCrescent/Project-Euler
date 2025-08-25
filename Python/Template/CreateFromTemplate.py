@@ -68,13 +68,13 @@ def create_files(number):
                            "    print(fun())\n")
         print(f"Script {title}" + ".py created. Good Luck!")
         # check for additional input data
-        target_line = [str(line) for line in lines_list if b'project/resources/' in line]
+        target_line = [str(line) for line in lines_list if b'resources/documents/' in line]
         if len(target_line) > 0:
             print(f"Problem {number} contains additional text input.")
             target_line = str(target_line[0]).split("</a>")[0].split("\"")[1]
             text_url = "https://projecteuler.net/" + target_line
             try:
-                urllib.request.urlopen(f"https://projecteuler.net/problem={number}").getcode() == 200
+                urllib.request.urlopen(text_url).getcode() == 200
             except HTTPError:
                 print("Something went wrong grabbing text file, could not get HTTP code 200.")
                 return
